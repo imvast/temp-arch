@@ -1,11 +1,10 @@
+# source of this on https://github.com/deepakkumar132/Discord-Token-Generator/blob/main/src/solver.py
+
 import toml, requests, time
 
 config = toml.load('config.toml')
 captchaService = config.get("captcha").get("service")
 key = config.get("captcha").get("capKey")
-
-solverType = "CAPSOLVER"
-solveKey   = ""
 
 class solver():
     def solveCaptcha(session: requests.Session) -> str:
