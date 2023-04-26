@@ -50,7 +50,7 @@ class Profile:
         self.headers = headers
         self.cookies = cookies
         self.ws = WebSocket()
-        self.self.session = self.session
+        self.session = session
 
 
     def ConnectWS(self):
