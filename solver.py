@@ -1,4 +1,4 @@
-# source of this on https://github.com/deepakkumar132/Discord-Token-Generator/blob/main/src/solver.py
+# source of this from https://github.com/deepakkumar132/Discord-Token-Generator/blob/main/src/solver.py
 
 import toml, requests, time
 
