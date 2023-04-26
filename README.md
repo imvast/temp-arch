@@ -28,8 +28,6 @@ publish date:
 may not work a couple days after release
 
 if patched, you can purchase working version @ https://shop.saiv.cc
-
-also this is using the same methods as Pr0tons gen since i gave him the methods before I made it lol so no need to purchase his when u get this for free :D
 </h4>
 
 ---
