@@ -15,19 +15,6 @@ from base64     import b64encode
 
 
 thread_lock = Lock()
-session = Session(
-    client_identifier="chrome_110",
-    ja3_string="771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53-255,0-11-10-35-23-13-43-45-51,29-23-24-25,0-1-2",
-    h2_settings={"HEADER_TABLE_SIZE": 65536,"MAX_CONCURRENT_STREAMS": 1000,"INITIAL_WINDOW_SIZE": 6291456,"MAX_HEADER_LIST_SIZE": 262144},
-    h2_settings_order=["HEADER_TABLE_SIZE","MAX_CONCURRENT_STREAMS","INITIAL_WINDOW_SIZE","MAX_HEADER_LIST_SIZE"],
-    supported_signature_algorithms=["ECDSAWithP256AndSHA256","PSSWithSHA256","PKCS1WithSHA256","ECDSAWithP384AndSHA384","PSSWithSHA384","PKCS1WithSHA384","PSSWithSHA512","PKCS1WithSHA512",],
-    supported_versions=["GREASE", "1.3", "1.2"],
-    key_share_curves=["GREASE", "X25519"],
-    cert_compression_algo="brotli",
-    pseudo_header_order=[":method",":authority",":scheme",":path"],
-    connection_flow=15663105,
-    header_order=["accept","user-agent","accept-encoding","accept-language"]
-)
 xtrack = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzExMi4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTEyLjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk5OTksImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9'
 
 
@@ -57,12 +44,13 @@ class Console:
         # thread_lock.release()
 
 class Profile:
-    def __init__(self, token, headers, cookies):
+    def __init__(self, session, token, headers, cookies):
         self.token = token
         headers['Referer'] = 'https://discord.com/channels/@me'
         self.headers = headers
         self.cookies = cookies
         self.ws = WebSocket()
+        self.self.session = self.session
 
 
     def ConnectWS(self):
@@ -119,7 +107,7 @@ class Profile:
         try:
             headers = self.headers
             try:
-                res = session.get(
+                res = self.session.get(
                     f"https://discord.com/api/v9/invites/{invite}?inputValue={invite}&with_counts=true&with_expiration=true", headers=headers).json()
                 jsonContext = {
                     "location": "Join Guild",
@@ -132,7 +120,7 @@ class Profile:
                 headers["x-context-properties"] = xContext
             except: pass
             headers["content-length"] = "2"
-            r = session.post(f'https://discord.com/api/v9/invites/{invite}', headers=headers, json={})
+            r = self.session.post(f'https://discord.com/api/v9/invites/{invite}', headers=headers, json={})
             if r.status_code == 200:
                 Console.print(f"(+) Joined [{invite}] - [200]")
             elif r.status_code == 429:
@@ -152,7 +140,7 @@ class Profile:
         payload = {
             "date_of_birth": "2000-05-18"
         }
-        dobres = session.patch('https://discord.com/api/v9/users/@me', headers=self.headers, cookies=self.cookies, json=payload)
+        dobres = self.session.patch('https://discord.com/api/v9/users/@me', headers=self.headers, cookies=self.cookies, json=payload)
         return dobres
 
     def AddBio(self, custom_bio: str = None):
@@ -161,7 +149,7 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        biores = session.patch('https://discord.com/api/v9/users/@me/profile', headers=headers, json=payload)
+        biores = self.session.patch('https://discord.com/api/v9/users/@me/profile', headers=headers, json=payload)
         return biores
         
     def AddPFP(self):
@@ -173,7 +161,7 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        addpfp = session.patch('https://discord.com/api/v9/users/@me', headers=headers, json=payload)
+        addpfp = self.session.patch('https://discord.com/api/v9/users/@me', headers=headers, json=payload)
         return addpfp
     
     def AddHypesquad(self):
@@ -182,7 +170,7 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        hyperes = session.post("https://discord.com/api/v9/hypesquad/online", json=payload, headers=self.headers)
+        hyperes = self.session.post("https://discord.com/api/v9/hypesquad/online", json=payload, headers=self.headers)
         return hyperes
         
     def EnableDevmode(self):
@@ -202,6 +190,10 @@ class Discord:
             "http": "http://" + self.proxy,
             "https": "http://" + self.proxy
         }
+        self.session = Session(
+            client_identifier="chrome_110",
+            random_tls_extension_order=True
+        )
         
         
     @staticmethod
@@ -260,7 +252,7 @@ class Discord:
                 'X-Track': xtrack,
             }
 
-            response = session.post('https://discord.com/api/v9/auth/register', headers=headers, cookies=cookies, proxy=self.proxies, json=payload)
+            response = self.session.post('https://discord.com/api/v9/auth/register', headers=headers, cookies=cookies, proxy=self.proxies, json=payload)
             if "token" not in response.text:
                 Console.print(f"(-) Failed to gen: {response.text}")
                 return False
@@ -277,7 +269,7 @@ class Discord:
 
             Console.print(f"(+) {token}")
 
-            profile = Profile(token, headers, cookies)
+            profile = Profile(self.session, token, headers, cookies)
             profile.ConnectWS()
             profile.UpdateDOB()
 
