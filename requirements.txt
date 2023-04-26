@@ -3,3 +3,4 @@ tls-client
 colored
 colorama
 requests
+toml
