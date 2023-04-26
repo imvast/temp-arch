@@ -1,0 +1,17 @@
+[ profile ]
+enableDev = true
+addHype   = true
+addPFP    = true
+addBio    = true
+
+
+[ data ]
+username  = "newunlockgen" # blank = random
+joinGuild = "vast" # invite code ~ blank = dont join
+threads   = 2
+debug     = true
+
+
+[ captcha ]
+service  = "CAPSOLVER"
+capKey   = 'CAI-E0B626A0D69D209520CA72D185661CEE'
