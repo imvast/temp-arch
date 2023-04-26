@@ -1,0 +1,5 @@
+websocket-client
+tls-client
+colored
+colorama
+requests
