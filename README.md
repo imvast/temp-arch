@@ -28,6 +28,8 @@ publish date:
 may not work a couple days after release
 
 if patched, you can purchase working version @ https://shop.saiv.cc
+  
+this version still works as of May 25th and if you want support join .gg/vast
 </h4>
 
 ---
