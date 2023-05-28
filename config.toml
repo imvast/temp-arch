@@ -6,12 +6,13 @@ addBio    = true
 
 
 [ data ]
-username  = "newunlockgen" # blank = random
+username  = "" # blank = random
 joinGuild = "vast" # invite code ~ blank = dont join
-threads   = 2
+threads   = 10
 debug     = true
+showLockd = false
 
 
 [ captcha ]
 service  = "CAPSOLVER"
-capKey   = 'CAI-E0B626A0D69D209520CA72D185661CEE'
+capKey   = 'CAI-B84C18E3DC8EA33F8E46E171B9E8C152'
