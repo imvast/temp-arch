@@ -1,22 +1,22 @@
 <div align="center">
   <kbd>
-  <a href="https://github.com/imvast/Discord-Unlocked-Gen">
+  <a href="https://github.com/imvast/Discord-Account-Gen">
     <img src="https://cdn.discordapp.com/attachments/1099515953223569420/1100569773240229958/image.png" alt="Logo" style="width: 110%; height: 110%;">
   </a>
   </kbd>
   
-  <h2 align="center">Discord - Unlocked Generator</h2>
+  <h2 align="center">Discord - Account Generator</h2>
   <p align="center">
-    A simple and fast program to create discord accounts/tokens automatically (<b> created by me </b>)
+    A simple and fast program to create unflagged discord accounts/tokens automatically (<b> created by me </b>)
     <br />
     <br />
-    <a href="https://skiddos.t.me">💬 Telegram</a>
+    <a href="https://discord.gg/vast">💬 Discord</a>
     ·
-    <a href="https://github.com/imvast/Discord-Unlocked-Gen#-changelog">📜 ChangeLog</a>
+    <a href="https://github.com/imvast/Discord-Account-Gen#-changelog">📜 ChangeLog</a>
     ·
-    <a href="https://github.com/imvast/Discord-Unlocked-Gen/issues">⚠️ Report Bug</a>
+    <a href="https://github.com/imvast/Discord-Account-Gen/issues">⚠️ Report Bug</a>
     ·
-    <a href="https://github.com/imvast/Discord-Unlocked-Gen/issues">💡 Request Feature</a>
+    <a href="https://github.com/imvast/Discord-Account-Gen/issues">💡 Request Feature</a>
   </p>
 </div>
 
@@ -48,7 +48,8 @@ this version is working as of May 27th and if you want support join .gg/vast
 - Slick UI
 - Decent Speeds
 - Simple & Easy To Setup
-- UNLOCKED/UNFLAGGED ACCOUNTS
+- Creates UNLOCKED/UNFLAGGED ACCOUNTS
+- Can joins server even if they are locked. (member boosting setting)
 - Undetected Client
 - Low Proxy Usage
 - OPTION: Enable DEV Mode
@@ -69,7 +70,7 @@ this version is working as of May 27th and if you want support join .gg/vast
 
 - I am not responsible for anything that may happen, such as, API Blocking, Account Termination, etc.
 - This **may** slow down your wifi and/or host computer
-- This was a quick project that was made for fun, so if you want to see further updates, star the repo & create an "issue" [here](https://github.com/imvast/Discord-Unlocked-Gen/issues/new/choose)
+- This was a quick project that was made for fun, so if you want to see further updates, star the repo & create an "issue" [here](https://github.com/imvast/Discord-Account-Gen/issues/new/choose)
 - I made this in 1 hour so like i said along with the above, it was rushed and the code isn't the best
 
 ---
@@ -77,6 +78,9 @@ this version is working as of May 27th and if you want support join .gg/vast
 ### 📜 ChangeLog
 
 ```diff
+v0.0.2 ⋮ 05/27/2023
++ Unpatch.
+
 v0.0.1 ⋮ 04/09/2023
 ! Initial release
 ```
@@ -84,7 +88,7 @@ v0.0.1 ⋮ 04/09/2023
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/imvast/Discord-Unlocked-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
-  <img src="https://img.shields.io/github/stars/imvast/Discord-Unlocked-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
-  <img src="https://img.shields.io/github/languages/top/imvast/Discord-Unlocked-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=python"/>
+  <img src="https://img.shields.io/github/license/imvast/Discord-Account-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
+  <img src="https://img.shields.io/github/stars/imvast/Discord-Account-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
+  <img src="https://img.shields.io/github/languages/top/imvast/Discord-Account-Gen.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=python"/>
 </p>
