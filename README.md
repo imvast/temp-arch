@@ -29,7 +29,7 @@ may not work a couple days after release
 
 if patched, you can purchase working version @ https://shop.saiv.cc
   
-this version still works as of May 25th and if you want support join .gg/vast
+this version is working as of May 27th and if you want support join .gg/vast
 </h4>
 
 ---
@@ -49,19 +49,19 @@ this version still works as of May 25th and if you want support join .gg/vast
 - Decent Speeds
 - Simple & Easy To Setup
 - UNLOCKED/UNFLAGGED ACCOUNTS
-- Automatically Enable DEV Mode
-- Add BIO
-- Add PFP
-- Add Random Hypesquad
-- Optional Join Server
 - Undetected Client
 - Low Proxy Usage
+- OPTION: Enable DEV Mode
+- OPTION: Add BIO
+- OPTION: Add PFP
+- OPTION: Add Random Hypesquad
+- OPTION: Join Server
 
 ---
 
 ### 🚀 Milestones
 
-- NOT DOING ANY UPDATES TO THIS. PURCHASE @ https://shop.saiv.cc FOR LIFETIME UPDATES AND BETTER VERSION
+- NOT GIVING SUPPORT NOR CUSTOM UPDATES | PURCHASE @ https://shop.saiv.cc FOR LIFETIME UPDATES AND BETTER VERSION
 
 ---
 
