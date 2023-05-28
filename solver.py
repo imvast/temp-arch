@@ -1,19 +1,19 @@
-# source of this from https://github.com/deepakkumar132/Discord-Token-Generator/blob/main/src/solver.py
-
-import toml, requests, time
+# i didnt make this file i got it from https://github.com/deepakkumar132/Discord-Token-Generator/blob/main/src/solver.py and improved it
+import toml
+import requests
+import time
 
 config = toml.load('config.toml')
 captchaService = config.get("captcha").get("service")
 key = config.get("captcha").get("capKey")
+
 
 class solver():
     def solveCaptcha(session: requests.Session) -> str:
         publicKey = "4c672d35-0701-42b2-88c3-78380b0db560"
         siteUrl = "https://discord.com"
 
-        if captchaService == "DORT":
-            return solver.solveDortCaptcha(publicKey, siteUrl, session=session)
-        elif captchaService == "CAPSOLVER":
+        if captchaService == "CAPSOLVER":
             return solver.solveGeneric(publicKey, siteUrl, domain="https://api.capsolver.com", session=session)
         elif captchaService == "ANTI[CAPTCHA]":
             return solver.solveGeneric(publicKey, siteUrl, domain="https://api.anti-captcha.com", session=session)
@@ -22,20 +22,15 @@ class solver():
 
     
     def solveGeneric(publicKey: str, siteUrl: str, session: requests.Session, domain: str = "https://api.capsolver.com") -> str:
-        taskType = "HCaptchaTurboTaskProxyless" if "capsolver" in domain else "HCaptchaTurboTask"
+        taskType = "HCaptchaTurboTask" if "capsolver" in domain else "HCaptchaTask"
         data1 = {
             "clientKey": key,
-            "appId": "5C4B67D5-D8E9-485D-AF57-4F427464F0CF",
             "task": {
                 "type": taskType,
                 "websiteURL": siteUrl,
                 "websiteKey": publicKey,
-                # "proxyType": "http",
-                #"proxyAddress":"8.8.8.8",
-                #"proxyPort":8080,
-                "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
-                #"enableIPV6": True,
-                # "proxy": solver.getProxyFromSession(session)
+                "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+                "proxy": solver.getProxyFromSession(session)
             }
         }
         resp1 = requests.post(f"{domain}/createTask", json=data1)
@@ -55,7 +50,7 @@ class solver():
 
             if status == "ready":
                 captchaToken = resp.json().get("solution").get("gRecaptchaResponse")
-                return resp.json().get("solution").get("gRecaptchaResponse")
+                return captchaToken
             else:
                 return solver.solveCaptcha(session=session)
         else:
