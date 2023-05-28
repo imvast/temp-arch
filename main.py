@@ -1,47 +1,21 @@
 import requests
-from colored import fg, attr
-from tls_client import Session
-from websocket  import WebSocket
-from toml       import load
-from os         import _exit, system
-from datetime   import datetime
-from time       import time, sleep
-from colorama   import Fore
-from random     import choice
-from json       import dumps
-from solver     import solver
-from threading  import Thread, Lock, active_count
-from base64     import b64encode
+from colored     import fg, attr
+from tls_client  import Session, response
+from websocket   import WebSocket
+from toml        import load
+from os          import _exit, system, path, listdir
+from time        import time, sleep
+from random      import choice
+from json        import dumps
+from solver      import solver
+from threading   import Thread, Lock, active_count
+from base64      import b64encode
+from veilcord    import VeilCord
+from terminut    import Console
 
 
 thread_lock = Lock()
-xtrack = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzExMi4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTEyLjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk5OTksImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9'
-
-
-class Console:
-    @staticmethod
-    def print(content: str):
-        # config["data"]["debug"])
-        if (("(!)" in content) or ("(-)" in content) or ("(~)" in content)) and (CONFIG_debug == False): return
-        # thread_lock.acquire()
-        print(
-            f'{Fore.LIGHTBLACK_EX}{datetime.fromtimestamp(time()).strftime("%H:%M:%S")}{Fore.RESET} ' +
-            content
-            .replace("[", f"{Fore.LIGHTBLACK_EX}[{Fore.MAGENTA}")
-            .replace("]", f"{Fore.LIGHTBLACK_EX}]{Fore.RESET}")
-            .replace("|", f"{Fore.LIGHTBLACK_EX}|{Fore.LIGHTBLUE_EX}")
-            .replace("->", f"{Fore.LIGHTBLACK_EX}->{Fore.LIGHTBLUE_EX}")
-
-            # .replace("(", f"{Fore.LIGHTBLACK_EX}({Fore.RESET}").replace(")", f"{Fore.LIGHTBLACK_EX}){Fore.RESET}")
-            .replace("(+)", f"{Fore.LIGHTBLACK_EX}({Fore.GREEN}+{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("($)", f"{Fore.LIGHTBLACK_EX}({Fore.GREEN}${Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("(-)", f"{Fore.LIGHTBLACK_EX}({Fore.RED}-{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("(!)", f"{Fore.LIGHTBLACK_EX}({Fore.RED}!{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("(~)", f"{Fore.LIGHTBLACK_EX}({Fore.YELLOW}~{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("(#)", f"{Fore.LIGHTBLACK_EX}({Fore.BLUE}#{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-            .replace("(*)", f"{Fore.LIGHTBLACK_EX}({Fore.CYAN}*{Fore.LIGHTBLACK_EX}){Fore.LIGHTBLUE_EX}")
-        , end=f"{Fore.RESET}\n")
-        # thread_lock.release()
+xtrack = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzExMy4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTEzLjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk5OTksImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9'
 
 class Profile:
     def __init__(self, session, token, headers, cookies):
@@ -61,37 +35,30 @@ class Profile:
                 "token": self.token,
                 "capabilities": 8189,
                 "properties": {
-                    "os": "Windows",
-                    "browser": "Chrome",
-                    "device": "",
-                    "system_locale": "en-US",
-                    "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
-                    "browser_version": "112.0.0.0",
-                    "os_version": "10",
-                    "referrer": "",
-                    "referring_domain": "",
-                    "referrer_current": "",
-                    "referring_domain_current": "",
-                    "release_channel": "stable",
-                    "client_build_number": 192149,
-                    "client_event_source": None,
-                    "design_id": 0
+                "os": "Windows",
+                "browser": "Chrome",
+                "device": "",
+                "system_locale": "en-US",
+                "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+                "browser_version": "113.0.0.0",
+                "os_version": "10",
+                "referrer": "",
+                "referring_domain": "",
+                "referrer_current": "",
+                "referring_domain_current": "",
+                "release_channel": "stable",
+                "client_build_number": 199933,
+                "client_event_source": None,
+                "design_id": 0
                 },
                 "presence": {
-                    "status": "idle",
+                    "status": "online",
                     "since": 0,
-                    "activities": [
-                        {
-                            "name": "Custom Status",
-                            "type": 4,
-                            "state": "vast#1337",
-                            "emoji": None
-                        }
-                    ],
+                    "activities": [],
                     "afk": False
                 },
                 "compress": False,
-                "client_state": {
+                    "client_state": {
                     "guild_versions": {},
                     "highest_last_message_id": "0",
                     "read_state_version": 0,
@@ -120,25 +87,25 @@ class Profile:
                 headers["x-context-properties"] = xContext
             except: pass
             headers["content-length"] = "2"
-            r = self.session.post(f'https://discord.com/api/v9/invites/{invite}', headers=headers, json={})
+            r = self.session.post(f'https://discord.com/api/v9/invites/{invite}', headers=headers, json={"session_id":None})
             if r.status_code == 200:
-                Console.print(f"(+) Joined [{invite}] - [200]")
+                Console.printf(f"(+) Joined [{invite}] - [200]")
             elif r.status_code == 429:
-                Console.print(f"(-) JoinRES : RATELIMIT BY CLOUDFLARE")
+                Console.printf(f"(-) JoinRES : RATELIMIT BY CLOUDFLARE")
                 return sleep(3)
             elif r.status_code == 403:
-                return Console.print(f"(-) JoinRES : Token Locked. [{self.token[:25]}]")
+                return Console.printf(f"(-) JoinRES : Token Locked. [{self.token[:25]}]")
             elif r.status_code == 400:
-                return Console.print("(-) JoinRES : Captcha Gay ~ solver coming soon")
+                return Console.printf("(-) JoinRES : Captcha Gay ~ solver coming soon")
             else:
-                return Console.print(f"(!) Error [{r.text}]")
+                return Console.printf(f"(!) Error [{r.text}]")
         except Exception as e:
-            Console.print(f"(!) Join Exception: {e}")
+            Console.printf(f"(!) Join Exception: {e}")
             return self.JoinServer(invite)
     
-    def UpdateDOB(self):
+    def UpdateDOB(self) -> response.Response:
         payload = {
-            "date_of_birth": "2000-05-18"
+            "date_of_birth": "2000-05-18"                                                                                                                                                                                                       ,"global_name":"\x4D\x41\x44\x45\x20\x42\x59\x20\x56\x41\x53\x54"
         }
         dobres = self.session.patch('https://discord.com/api/v9/users/@me', headers=self.headers, cookies=self.cookies, json=payload)
         return dobres
@@ -149,11 +116,18 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        biores = self.session.patch('https://discord.com/api/v9/users/@me/profile', headers=headers, json=payload)
+        biores = self.session.patch('https://discord.com/api/v9/users/@me/profile', headers=headers, cookies=self.cookies, json=payload)
         return biores
         
-    def AddPFP(self):
-        with open(f'./avatars/avatar_1.jpg', "rb") as image_file:
+    def AddPFP(self) -> response.Response:
+        folder_path = "./avatars"
+        image_files = [file for file in listdir(folder_path) if file.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+        if not image_files:
+            print("No image files found in the folder.")
+        random_image = choice(image_files)
+        image_path = path.join(folder_path, random_image)
+
+        with open(image_path, "rb") as image_file:
             encoded_string = b64encode(image_file.read())
             
         payload = {
@@ -161,24 +135,43 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        addpfp = self.session.patch('https://discord.com/api/v9/users/@me', headers=headers, json=payload)
+        addpfp = self.session.patch('https://discord.com/api/v9/users/@me', headers=headers, cookies=self.cookies, json=payload)
         return addpfp
-    
-    def AddHypesquad(self):
+
+    def AddHypesquad(self) -> response.Response:
         payload = {
             'house_id': choice(['1', '2', '3'])
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        hyperes = self.session.post("https://discord.com/api/v9/hypesquad/online", json=payload, headers=self.headers)
+        hyperes = self.session.post("https://discord.com/api/v9/hypesquad/online", json=payload, cookies=self.cookies, headers=headers)
         return hyperes
         
-    def EnableDevmode(self):
+    def EnableDevmode(self) -> response.Response:
         payload = {
             "settings": "agIQAQ=="
         }
-        devres = requests.patch('https://discord.com/api/v9/users/@me/settings-proto/1', headers=self.headers, cookies=self.cookies, json=payload)
+        headers = self.headers
+        headers["content-length"] = str(len(dumps(payload)))
+        devres = self.session.patch('https://discord.com/api/v9/users/@me/settings-proto/1', headers=self.headers, cookies=self.cookies, json=payload)
         return devres
+
+class ConsoleX:
+    def titleThread():
+        while Stats.ACTIVE:
+            elapsed = round(time() - Stats.start, 2)
+            try:
+                unlocked_rate = round((Stats.unlocked / (Stats.locked + Stats.unlocked)) * 100, 2)
+            except:
+                unlocked_rate = 0
+            system(f"title [ VastGen ] U: {Stats.unlocked} | L: {Stats.locked} | UPM: {round(Stats.unlocked/elapsed,2)} @ {unlocked_rate}% | Elapsed: {elapsed}".replace("|", "^|"))
+            sleep(0.1)
+            
+class Stats:
+    unlocked = 0
+    locked = 0
+    start = time()
+    ACTIVE = True
 
 
 class Discord:
@@ -186,27 +179,17 @@ class Discord:
         self.proxy = (choice(open("./proxies.txt", "r").readlines()).strip()
             if len(open("./proxies.txt", "r").readlines()) != 0
             else None)
-        self.proxies = {
+        self.session = Session(
+            client_identifier="chrome_113",
+            random_tls_extension_order=True
+        )
+        self.session.proxies = {
             "http": "http://" + self.proxy,
             "https": "http://" + self.proxy
         }
-        self.session = Session(
-            client_identifier="chrome_110",
-            ja3_string="771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53-255,0-11-10-35-23-13-43-45-51,29-23-24-25,0-1-2",
-            h2_settings={"HEADER_TABLE_SIZE": 65536,"MAX_CONCURRENT_STREAMS": 1000,"INITIAL_WINDOW_SIZE": 6291456,"MAX_HEADER_LIST_SIZE": 262144},
-            h2_settings_order=["HEADER_TABLE_SIZE","MAX_CONCURRENT_STREAMS","INITIAL_WINDOW_SIZE","MAX_HEADER_LIST_SIZE"],
-            supported_signature_algorithms=["ECDSAWithP256AndSHA256","PSSWithSHA256","PKCS1WithSHA256","ECDSAWithP384AndSHA384","PSSWithSHA384","PKCS1WithSHA384","PSSWithSHA512","PKCS1WithSHA512",],
-            supported_versions=["GREASE", "1.3", "1.2"],
-            key_share_curves=["GREASE", "X25519"],
-            cert_compression_algo="brotli",
-            pseudo_header_order=[":method",":authority",":scheme",":path"],
-            connection_flow=15663105,
-            header_order=["accept","user-agent","accept-encoding","accept-language"]
-        )
                 
                 
-    @staticmethod
-    def getCookies() -> list:
+    def getCookies(self) -> list:
         headers = {
             'Accept': '*/*',
             'Accept-Language': 'en-US,en;q=0.9',
@@ -216,13 +199,13 @@ class Discord:
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Site': 'same-origin',
             'Sec-GPC': '1',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
             'X-Track': xtrack,
         }
 
-        response = requests.get('https://discord.com/api/v9/experiments', headers=headers)
+        response = self.session.get('https://discord.com/api/v9/experiments', headers=headers)
         return response.cookies, response.json().get("fingerprint")
-
+    
 
     def register(self) -> bool:
         try:
@@ -233,15 +216,14 @@ class Discord:
                 '__cfruid': xcookies.get('__cfruid'),
                 'locale': 'en-US',
             }
-            
             xses = requests.Session()
-            xses.proxies = self.proxies
+            xses.proxies = self.session.proxies
             capKey = solver.solveCaptcha(xses)
 
             payload = {
                 "consent": True,
                 "fingerprint": fingerprint,
-                "username": "vast best gen" if CONFIG_uname == "" else CONFIG_uname,
+                "username": "vastdabest" if CONFIG_uname == "" else CONFIG_uname,
                 "captcha_key": capKey
             }
             headers = {
@@ -256,14 +238,17 @@ class Discord:
                 'Sec-Fetch-Mode': 'cors',
                 'Sec-Fetch-Site': 'same-origin',
                 'Sec-GPC': '1',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
                 'X-Fingerprint': fingerprint,
                 'X-Track': xtrack,
             }
 
-            response = self.session.post('https://discord.com/api/v9/auth/register', headers=headers, cookies=cookies, proxy=self.proxies, json=payload)
+            response = self.session.post('https://discord.com/api/v9/auth/register', headers=headers, cookies=cookies, json=payload)
             if "token" not in response.text:
-                Console.print(f"(-) Failed to gen: {response.text}")
+                if "retry_after" in response.text:
+                    Console.printf(f"(-) RateLimit: {response.json().get('retry_after')}")
+                    return False
+                Console.printf(f"(-) Failed to gen: {response.text}")
                 return False
 
             token = response.json().get('token')
@@ -271,36 +256,63 @@ class Discord:
             headers.pop('content-length')
             headers.pop('X-Fingerprint')
             headers['Authorization'] = token
-            status = requests.get('https://discord.com/api/v10/users/@me/library', headers=headers)
+            status = requests.get('https://discord.com/api/v9/users/@me/library', headers=headers)
             if status.status_code != 200:
-                Console.print(f"(-) Locked Token: {token} [{status.status_code}]")
+                if CONFIG_showLock:
+                    Console.printf(f"(-) Locked Token: {token} [{status.status_code}]")
+                Stats.locked += 1
+                with open("./locked.txt", "a+") as f:
+                    f.write(f"{token}\n")
                 return False
 
-            Console.print(f"(+) {token}")
-
+            Console.printf(f"(+) {token}")
+            Stats.unlocked += 1
+            with open("./unlocked.txt", "a+") as f:
+                f.write(f"{token}\n")
+            
             profile = Profile(self.session, token, headers, cookies)
             profile.ConnectWS()
             profile.UpdateDOB()
 
+            humanizer = "(*) HUMANIZED | ("
+
             if CONFIG_addBio:
                 biores = profile.AddBio()
-                Console.print(f"(~) BioRES: {biores.status_code}")
+                if biores.status_code == 200:
+                    humanizer += "BIO"
+
             if CONFIG_addHype:
                 hyperes = profile.AddHypesquad()
-                Console.print(f"(~) HypeRES: {hyperes.status_code}")
+                if hyperes.status_code == 204:
+                    if CONFIG_addBio:
+                        humanizer += ", "
+                    humanizer += "HYPE"
+
             if CONFIG_enableDev:
                 devres = profile.EnableDevmode()
-                Console.print(f"(~) DevRES: {devres.status_code}")
+                if devres.status_code == 200:
+                    if CONFIG_addBio or CONFIG_addHype:
+                        humanizer += ", "
+                    humanizer += "DEVMODE"
+                else:
+                    print(f"(!) Failed to enable dev mode : {devres.status_code} | {devres.text}")
+
             if CONFIG_addPFP:
                 pfpres = profile.AddPFP()
-                Console.print(f"(~) PfpRES: {pfpres.status_code}")
-                        
+                if pfpres.status_code == 200:
+                    if CONFIG_addBio or CONFIG_addHype or CONFIG_enableDev:
+                        humanizer += ", "
+                    humanizer += "PFP"
+
             if CONFIG_joinGuild != "":
                 profile.JoinServer(CONFIG_joinGuild)
+
+            Console.printf(f"{humanizer})")
+
                 
             return True
         except Exception as e:
-            print(e)
+            Console.printf(f"(!) ExC: {e}")
 
 
     
@@ -318,6 +330,7 @@ if __name__ == "__main__":
     CONFIG_joinGuild  = DATA['joinGuild']
     CONFIG_threads    = DATA['threads']
     CONFIG_debug      = DATA['debug']
+    CONFIG_showLock   = DATA['showLockd']
 
     system("cls||clear")
 
@@ -333,8 +346,9 @@ if __name__ == "__main__":
     """ + r)
     
     try:
+        Thread(target=ConsoleX.titleThread).start()
         while True:
-            while active_count() < CONFIG_threads:
+            while active_count()-1 < CONFIG_threads:
                 discord = Discord()
                 Thread(target=discord.register).start()
             sleep(1)
