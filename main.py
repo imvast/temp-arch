@@ -57,7 +57,7 @@ class Profile:
                         "name": "Custom Status",
                         "type": 4,
                         "state": "vast#1337",
-                        "emoji": None
+                        "emoji": "🤓"
                     }],
                     "afk": False
                 },
@@ -111,10 +111,12 @@ class Profile:
         payload = {
             "date_of_birth": "2000-05-18"                                                                                                                                                                                                       ,"global_name":"\x4D\x41\x44\x45\x20\x42\x59\x20\x56\x41\x53\x54"
         }
-        dobres = self.session.patch('https://discord.com/api/v9/users/@me', headers=self.headers, cookies=self.cookies, json=payload)
+        headers = self.headers
+        headers["content-length"] = str(len(dumps(payload)))
+        dobres = self.session.patch('https://discord.com/api/v9/users/@me', headers=headers, cookies=self.cookies, json=payload)
         return dobres
 
-    def AddBio(self, custom_bio: str = None):
+    def AddBio(self, custom_bio: str = None) -> response.Response:
         payload = {
             "bio": "discord.gg/vast" if custom_bio is None else custom_bio
         }
@@ -157,7 +159,7 @@ class Profile:
         }
         headers = self.headers
         headers["content-length"] = str(len(dumps(payload)))
-        devres = self.session.patch('https://discord.com/api/v9/users/@me/settings-proto/1', headers=self.headers, cookies=self.cookies, json=payload)
+        devres = self.session.patch('https://discord.com/api/v9/users/@me/settings-proto/1', headers=headers, cookies=self.cookies, json=payload)
         return devres
 
 class ConsoleX:
@@ -228,7 +230,8 @@ class Discord:
                 "consent": True,
                 "fingerprint": fingerprint,
                 "username": "vastdabest" if CONFIG_uname == "" else CONFIG_uname,
-                "captcha_key": capKey
+                "captcha_key": capKey,
+                "invite": "vast"
             }
             headers = {
                 'Accept': '*/*',
@@ -298,8 +301,6 @@ class Discord:
                     if CONFIG_addBio or CONFIG_addHype:
                         humanizer += ", "
                     humanizer += "DEVMODE"
-                else:
-                    print(f"(!) Failed to enable dev mode : {devres.status_code} | {devres.text}")
 
             if CONFIG_addPFP:
                 pfpres = profile.AddPFP()
