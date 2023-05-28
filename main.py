@@ -8,13 +8,12 @@ from time        import time, sleep
 from random      import choice
 from json        import dumps
 from solver      import solver
-from threading   import Thread, Lock, active_count
+from threading   import Thread, active_count
 from base64      import b64encode
 from veilcord    import VeilCord
 from terminut    import Console
 
 
-thread_lock = Lock()
 xtrack = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzExMy4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTEzLjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk5OTksImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9'
 
 class Profile:
@@ -35,30 +34,35 @@ class Profile:
                 "token": self.token,
                 "capabilities": 8189,
                 "properties": {
-                "os": "Windows",
-                "browser": "Chrome",
-                "device": "",
-                "system_locale": "en-US",
-                "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-                "browser_version": "113.0.0.0",
-                "os_version": "10",
-                "referrer": "",
-                "referring_domain": "",
-                "referrer_current": "",
-                "referring_domain_current": "",
-                "release_channel": "stable",
-                "client_build_number": 199933,
-                "client_event_source": None,
-                "design_id": 0
+                    "os": "Windows",
+                    "browser": "Chrome",
+                    "device": "",
+                    "system_locale": "en-US",
+                    "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+                    "browser_version": "113.0.0.0",
+                    "os_version": "10",
+                    "referrer": "",
+                    "referring_domain": "",
+                    "referrer_current": "",
+                    "referring_domain_current": "",
+                    "release_channel": "stable",
+                    "client_build_number": 199933,
+                    "client_event_source": None,
+                    "design_id": 0
                 },
                 "presence": {
-                    "status": "online",
+                    "status": choice(["online", "idle", "dnd"]),
                     "since": 0,
-                    "activities": [],
+                    "activities": [{
+                        "name": "Custom Status",
+                        "type": 4,
+                        "state": "vast#1337",
+                        "emoji": None
+                    }],
                     "afk": False
                 },
                 "compress": False,
-                    "client_state": {
+                "client_state": {
                     "guild_versions": {},
                     "highest_last_message_id": "0",
                     "read_state_version": 0,
